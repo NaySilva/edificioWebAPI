@@ -7,6 +7,7 @@ from django.shortcuts import render
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.throttling import ScopedRateThrottle
 
 from core.models import *
 from core.permissions import *
@@ -59,6 +60,8 @@ class SalaList(generics.ListCreateAPIView):
     queryset = Sala.objects.all()
     serializer_class = SalaSerializer
     name = 'sala-list'
+    throttle_scope = 'salas'
+    throttle_classes = (ScopedRateThrottle,)
 
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
@@ -70,6 +73,8 @@ class SalaDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Sala.objects.all()
     serializer_class = SalaSerializer
     name = 'sala-detail'
+    throttle_scope = 'salas'
+    throttle_classes = (ScopedRateThrottle,)
 
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
