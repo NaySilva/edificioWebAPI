@@ -24,15 +24,6 @@ class SalaSerializer(serializers.ModelSerializer):
         model = Sala
         fields = ('url', 'numero', 'andar')
 
-class ProfissionalSerializer(serializers.HyperlinkedModelSerializer):
-
-    escritorio = serializers.SlugRelatedField(queryset=Escritorio.objects.all(),
-                                          slug_field="nome_escritorio")
-
-    class Meta:
-        model = Profissional
-        fields = ('url', 'user', 'telefone', 'profissao', 'gerente', 'escritorio', 'status')
-
 
 class ItemAgendaSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -40,27 +31,41 @@ class ItemAgendaSerializer(serializers.HyperlinkedModelSerializer):
                                           slug_field="nome")
     cliente = serializers.SlugRelatedField(queryset=Cliente.objects.all(),
                                           slug_field="nome")
-    escritorio = serializers.SlugRelatedField(queryset=Escritorio.objects.all(),
-                                            slug_field="nome_escritorio")
 
     class Meta:
         model = ItemAgenda
-        fields = ('url', 'profissional', 'cliente', 'data', 'horario', 'escritorio', 'situacao')
+        fields = ('url', 'profissional', 'cliente', 'data', 'horario')
 
+
+
+class ProfissionalSerializer(serializers.HyperlinkedModelSerializer):
+
+    escritorio = serializers.SlugRelatedField(queryset=Escritorio.objects.all(),
+                                          slug_field="nome_escritorio")
+    user = serializers.SlugRelatedField(queryset=User.objects.all(),
+                                          slug_field="username")
+
+    class Meta:
+        model = Profissional
+        fields = ('url', 'user', 'telefone', 'profissao', 'gerente', 'escritorio', 'status',)
 
 class ProfissionalDetailSerializer(serializers.HyperlinkedModelSerializer):
 
     escritorio = serializers.SlugRelatedField(queryset=Escritorio.objects.all(),
                                           slug_field="nome_escritorio")
+    user = serializers.SlugRelatedField(queryset=User.objects.all(),
+                                          slug_field="username")
 
-    agenda = ItemAgendaSerializer(many=True, read_only=True)
+    agenda_profissional = ItemAgendaSerializer(many=True, read_only=True)
 
     class Meta:
         model = Profissional
-        fields = ('url', 'user','telefone', 'profissao', 'gerente', 'escritorio', 'status','agenda')
+        fields = ('url', 'user','telefone', 'profissao', 'gerente', 'escritorio', 'status', 'agenda_profissional')
 
 
-class EscritorioSerializer(serializers.ModelSerializer):
+class EscritorioSerializer(serializers.HyperlinkedModelSerializer):
+
+    salas = serializers.SlugRelatedField(many=True, queryset=Sala.objects.all(), slug_field="descricao")
 
     class Meta:
         model = Escritorio
@@ -69,7 +74,7 @@ class EscritorioSerializer(serializers.ModelSerializer):
 
 class EscritorioDetailSerializer(serializers.HyperlinkedModelSerializer):
 
-    salas = SalaSerializer(many=True, read_only=True)
+    salas = serializers.SlugRelatedField(many=True, queryset=Sala.objects.all(), slug_field="descricao")
 
     profissionais = ProfissionalSerializer(many=True, read_only=True)
 

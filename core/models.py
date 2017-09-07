@@ -18,6 +18,7 @@ class Escritorio(models.Model):
     nome_escritorio = models.CharField(max_length=120)
     servico = models.CharField(max_length=120)
 
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -30,15 +31,21 @@ class Sala(models.Model):
     numero = models.CharField(max_length=3)
     andar = models.CharField(max_length=2)
     escritorio = models.ForeignKey(Escritorio, on_delete=models.CASCADE, related_name='salas', null=True)
+    descricao = models.CharField(max_length=120)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.descricao = self.descrever()
+
+    def descrever(self):
+        return 'Sala %s - %s Andar' % (self.numero, self.andar)
 
     def __str__(self):
-        return self.numero
+        return 'Sala %s - %s Andar' % (self.numero, self.andar)
 
 class Profissional(models.Model):
     user = models.ForeignKey('auth.User',default='1')
+    nome = models.CharField(max_length=30)
     telefone = models.CharField(max_length=10)
     profissao = models.CharField(max_length=120)
     escritorio = models.ForeignKey(Escritorio, on_delete=models.CASCADE, related_name="profissionais", null=True)
@@ -50,9 +57,13 @@ class Profissional(models.Model):
     )
     status = models.CharField(max_length=1, choices=STATUS, default='A')
 
+    def nomear(self):
+        return self.user.username
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.nome = self.nomear()
 
     def __str__(self):
         return 'Profissional %s' % (self.nome)
@@ -60,7 +71,7 @@ class Profissional(models.Model):
 
 
 class ItemAgenda(models.Model):
-    profissional = models.ForeignKey(Profissional, on_delete=models.CASCADE, related_name='agenda_profissionais')
+    profissional = models.ForeignKey(Profissional, on_delete=models.CASCADE, related_name='agenda_profissional')
     horario = models.TimeField()
     data = models.DateField()
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='agenda_cliente')
@@ -79,6 +90,7 @@ class ItemAgenda(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.escritorio = self.profissional.escritorio
 
     def __str__(self):
         return '%s - %s' % (self.cliente, self.profissional)

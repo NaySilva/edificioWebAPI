@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.auth.models import User
 from django.shortcuts import render
 
@@ -46,6 +48,19 @@ class SalaDetail(generics.RetrieveUpdateDestroyAPIView):
     name = 'sala-detail'
 
 
+
+class ItemAgendaList(generics.ListCreateAPIView):
+    queryset = ItemAgenda.objects.all()
+    serializer_class = ItemAgendaSerializer
+    name = 'itemagenda-list'
+
+
+class ItemAgendaDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ItemAgenda.objects.all()
+    serializer_class = ItemAgendaSerializer
+    name = 'itemagenda-detail'
+
+
 class ProfissionalList(generics.ListCreateAPIView):
     queryset = Profissional.objects.all()
     serializer_class = ProfissionalSerializer
@@ -58,17 +73,6 @@ class ProfissionalDetail(generics.RetrieveUpdateDestroyAPIView):
     name = 'profissional-detail'
 
 
-
-class ItemAgendaList(generics.ListCreateAPIView):
-    queryset = ItemAgenda.objects.all()
-    serializer_class = ItemAgendaSerializer
-    name = 'itemagenda-list'
-
-
-class ItemAgendaDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ItemAgenda.objects.all()
-    serializer_class = ItemAgendaSerializer
-    name = 'itemagenda-detail'
 
 
 class EscritorioList(generics.ListCreateAPIView):
@@ -101,3 +105,18 @@ class ApiRoot(generics.GenericAPIView):
             'agenda': reverse(ItemAgendaList.name,
                              request=request)
             })
+
+
+def import_data():
+    dump_data = open('db.json', 'r')
+    as_json = json.load(dump_data)
+
+    for user in as_json['users']:
+
+        first_name = user['name'].split(" ")[0]
+        last_name = user['name'].split(" ")[1]
+        new_user = User.objects.create_user(first_name=first_name,
+                                            last_name=last_name,
+                                            username=user['username'],
+                                            email=user['email'],
+                                            password='123')
