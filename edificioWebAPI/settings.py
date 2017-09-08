@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
-    'rest_framework'
+    'rest_framework',
+    'django_filters'
 ]
 
 
@@ -57,7 +58,10 @@ REST_FRAMEWORK = {
         'anon':'10/hour',
         'user':'20/hour',
         'salas':'5/day',
-    }
+    },
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    )
 }
 
 

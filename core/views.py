@@ -1,9 +1,11 @@
 import json
 
+from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.models import User
 from django.shortcuts import render
 
 # Create your views here.
+from rest_framework.filters import OrderingFilter
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -40,6 +42,8 @@ class ClienteList(generics.ListCreateAPIView):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     name = 'cliente-list'
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('nome','cpf')
 
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
@@ -87,6 +91,8 @@ class ItemAgendaList(generics.ListCreateAPIView):
     queryset = ItemAgenda.objects.all()
     serializer_class = ItemAgendaSerializer
     name = 'itemagenda-list'
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ('data', 'horario')
 
     permission_classes = (
         permissions.IsAuthenticatedOrReadOnly,
