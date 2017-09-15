@@ -31,7 +31,7 @@ class Sala(models.Model):
     numero = models.CharField(max_length=3)
     andar = models.CharField(max_length=2)
     escritorio = models.ForeignKey(Escritorio, on_delete=models.CASCADE, related_name='salas', null=True)
-    descricao = models.CharField(max_length=120)
+    descricao = models.CharField(max_length=120, null=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

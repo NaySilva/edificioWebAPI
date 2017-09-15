@@ -1,6 +1,9 @@
 from django.conf.urls import url
+from rest_framework_swagger.views import get_swagger_view
 
 from core import views
+
+schema_view = get_swagger_view(title='EdificioWebAPI')
 
 urlpatterns = [
     url(r'^user/$',
@@ -42,4 +45,5 @@ urlpatterns = [
     url(r'^$',
         views.ApiRoot.as_view(),
         name=views.ApiRoot.name),
+    url(r'^swagger/$', schema_view),
     ]
